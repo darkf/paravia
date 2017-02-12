@@ -1,32 +1,6 @@
-//**************************************
-// Name: paravia.c
-// Description:This is a port of the original TRS-80 BASIC code for Santa Paravia and Fiumaccio, (C) 1979 George Blank (used with permission).
-// By: Thomas Knox
-//
-//
-// Inputs:N/A
-//
-// Returns:N/A
-//
-//Assumes:Should compile and run on any system with an ANSI-C compiler.
-//
-//Side Effects:N/A
-//This code is copyrighted and has limited warranties.
-//Please see http://www.Planet-Source-Code.com/xq/ASP/txtCodeId.7183/lngWId.3/qx/vb/scripts/ShowCode.htm
-//for details.
-//**************************************
-
-/******************************************************************************
-** **
-** Santa Paravia & Fiumaccio. Translated from the original TRS-80 BASIC **
-** source code into C by Thomas Knox <tknox@mac.com>.**
-** **
-** Original program (C) 1979 by George Blank**
-** <gwblank@postoffice.worldnet.att.net>**
-** **
-******************************************************************************/
 /*
 Copyright (C) 2000 Thomas Knox
+
 Portions Copyright (C) 1979 by George Blank, used with permission.
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -39,9 +13,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-Thomas Knox
-tknox@mac.com
 */
+
 /* Declare our standard C headers. */ 
 #include <stdio.h>
 #include <string.h>
