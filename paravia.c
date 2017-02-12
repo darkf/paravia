@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-#include <ncurses/curses.h>
 
 typedef struct {
     int Cathedral, Clergy, CustomsDuty, CustomsDutyRevenue, DeadSerfs;
