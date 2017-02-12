@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <stdlib.h>
 #include <ncurses/curses.h>
 
-struct Player {
+typedef struct {
     int Cathedral, Clergy, CustomsDuty, CustomsDutyRevenue, DeadSerfs;
     int Difficulty, FleeingSerfs, GrainDemand, GrainPrice, GrainReserve;
     int Harvest, IncomeTax, IncomeTaxRevenue, RatsAte;
@@ -35,7 +35,6 @@ struct Player {
     float PublicWorks, LandPrice;
     bool InvadeMe, IsBankrupt, IsDead, IWon, MaleOrFemale, NewTitle;
 } Player;
-typedef struct Player player;
 
 /* Declare our list of cities. */
 char CityList[7][15] = {"Santa Paravia", "Fiumaccio", "Torricella", "Molinetto", "Fontanile", "Romanga", "Monterana"};
@@ -50,41 +49,41 @@ char FemaleTitles[8][15] = {"Lady",    "Baroness",      "Countess", "Marquise",
 /* Our prototypes. */
 int main(void);
 int Random(int);
-void InitializePlayer(player *, int, int, int, char *, bool);
-void AddRevenue(player *);
-int AttackNeighbor(player *, player *);
-void BuyCathedral(player *);
-void BuyGrain(player *);
-void BuyLand(player *);
-void BuyMarket(player *);
-void BuyMill(player *);
-void BuyPalace(player *);
-void BuySoldiers(player *);
+void InitializePlayer(Player *, int, int, int, char *, bool);
+void AddRevenue(Player *);
+int AttackNeighbor(Player *, Player *);
+void BuyCathedral(Player *);
+void BuyGrain(Player *);
+void BuyLand(Player *);
+void BuyMarket(Player *);
+void BuyMill(Player *);
+void BuyPalace(Player *);
+void BuySoldiers(Player *);
 int limit10(int, int);
-bool CheckNewTitle(player *);
-void GenerateHarvest(player *);
-void GenerateIncome(player *);
-void ChangeTitle(player *);
-void NewLandAndGrainPrices(player *);
-void PrintGrain(player *);
-int ReleaseGrain(player *);
-void SeizeAssets(player *);
-void SellGrain(player *);
-void SellLand(player *);
-void SerfsDecomposing(player *, float);
-void SerfsProcreating(player *, float);
+bool CheckNewTitle(Player *);
+void GenerateHarvest(Player *);
+void GenerateIncome(Player *);
+void ChangeTitle(Player *);
+void NewLandAndGrainPrices(Player *);
+void PrintGrain(Player *);
+int ReleaseGrain(Player *);
+void SeizeAssets(Player *);
+void SellGrain(Player *);
+void SellLand(Player *);
+void SerfsDecomposing(Player *, float);
+void SerfsProcreating(Player *, float);
 void PrintInstructions(void);
-void PlayGame(player[], int);
-void NewTurn(player *, int, player[], player *);
-void BuySellGrain(player *);
-void AdjustTax(player *);
-void DrawMap(player *);
-void StatePurchases(player *, int, player[]);
-void ShowStats(player[], int);
-void ImDead(player *);
+void PlayGame(Player[], int);
+void NewTurn(Player *, int, Player[], Player *);
+void BuySellGrain(Player *);
+void AdjustTax(Player *);
+void DrawMap(Player *);
+void StatePurchases(Player *, int, Player[]);
+void ShowStats(Player[], int);
+void ImDead(Player *);
 
 int main(void) {
-    player MyPlayers[6];
+    Player MyPlayers[6];
     int NumOfPlayers, i, level;
     char string[255], name[25];
     bool MorF;
@@ -135,7 +134,7 @@ int Random(int hi) {
     return (int)(rand() / RAND_MAX * hi);
 }
 
-void InitializePlayer(player *Me, int year, int city, int level, char *name, bool MorF) {
+void InitializePlayer(Player *Me, int year, int city, int level, char *name, bool MorF) {
     Me->Cathedral = 0;
     strcpy(Me->City, CityList[city]);
     Me->Clergy = 5;
@@ -176,7 +175,7 @@ void InitializePlayer(player *Me, int year, int city, int level, char *name, boo
     return;
 }
 
-void AddRevenue(player *Me) {
+void AddRevenue(Player *Me) {
     Me->Treasury += (Me->JusticeRevenue + Me->CustomsDutyRevenue);
     Me->Treasury += (Me->IncomeTaxRevenue + Me->SalesTaxRevenue);
     /* Penalize deficit spending. */
@@ -188,7 +187,7 @@ void AddRevenue(player *Me) {
     return;
 }
 
-int AttackNeighbor(player *Me, player *Him) {
+int AttackNeighbor(Player *Me, Player *Him) {
     int LandTaken;
     int deadsoldiers = 0;
     if (Me->WhichPlayer == 7)
@@ -208,7 +207,7 @@ int AttackNeighbor(player *Me, player *Him) {
     return (LandTaken);
 }
 
-void BuyCathedral(player *Me) {
+void BuyCathedral(Player *Me) {
     Me->Cathedral += 1;
     Me->Clergy += Random(6);
     Me->Treasury -= 5000;
@@ -216,7 +215,7 @@ void BuyCathedral(player *Me) {
     return;
 }
 
-void BuyGrain(player *Me) {
+void BuyGrain(Player *Me) {
     char string[256];
     int HowMuch;
     printf("How much grain do you want to buy (0 to specify a total)? ");
@@ -237,7 +236,7 @@ void BuyGrain(player *Me) {
     return;
 }
 
-void BuyLand(player *Me) {
+void BuyLand(Player *Me) {
     char string[256];
     int HowMuch;
     printf("How much land do you want to buy? ");
@@ -248,7 +247,7 @@ void BuyLand(player *Me) {
     return;
 }
 
-void BuyMarket(player *Me) {
+void BuyMarket(Player *Me) {
     Me->Marketplaces += 1;
     Me->Merchants += 5;
     Me->Treasury -= 1000;
@@ -256,14 +255,14 @@ void BuyMarket(player *Me) {
     return;
 }
 
-void BuyMill(player *Me) {
+void BuyMill(Player *Me) {
     Me->Mills += 1;
     Me->Treasury -= 2000;
     Me->PublicWorks += 0.25;
     return;
 }
 
-void BuyPalace(player *Me) {
+void BuyPalace(Player *Me) {
     Me->Palace += 1;
     Me->Nobles += Random(2);
     Me->Treasury -= 3000;
@@ -271,7 +270,7 @@ void BuyPalace(player *Me) {
     return;
 }
 
-void BuySoldiers(player *Me) {
+void BuySoldiers(Player *Me) {
     Me->Soldiers += 20;
     Me->Serfs -= 20;
     Me->Treasury -= 500;
@@ -283,7 +282,7 @@ int limit10(int num, int denom) {
     return (val > 10 ? 10 : val);
 }
 
-bool CheckNewTitle(player *Me) {
+bool CheckNewTitle(Player *Me) {
     int Total;
     /* Tally up our success so far . . . . */
     Total = limit10(Me->Marketplaces, 1);
@@ -314,14 +313,14 @@ bool CheckNewTitle(player *Me) {
     return (false);
 }
 
-void GenerateHarvest(player *Me) {
+void GenerateHarvest(Player *Me) {
     Me->Harvest = (Random(5) + Random(6)) / 2;
     Me->Rats = Random(50);
     Me->GrainReserve = ((Me->GrainReserve * 100) - (Me->GrainReserve * Me->Rats)) / 100;
     return;
 }
 
-void GenerateIncome(player *Me) {
+void GenerateIncome(Player *Me) {
     float y;
     int revenues = 0;
     char string[256];
@@ -361,7 +360,7 @@ void GenerateIncome(player *Me) {
     return;
 }
 
-void ChangeTitle(player *Me) {
+void ChangeTitle(Player *Me) {
     if (Me->MaleOrFemale == true)
         strcpy(Me->Title, MaleTitles[Me->TitleNum]);
     else
@@ -373,7 +372,7 @@ void ChangeTitle(player *Me) {
     return;
 }
 
-void NewLandAndGrainPrices(player *Me) {
+void NewLandAndGrainPrices(Player *Me) {
     float x, y, MyRandom;
     int h;
     /* Generate an offset for use in later int->float conversions. */
@@ -413,7 +412,7 @@ void NewLandAndGrainPrices(player *Me) {
     return;
 }
 
-void PrintGrain(player *Me) {
+void PrintGrain(Player *Me) {
     switch (Me->Harvest) {
         case 0:
         case 1:
@@ -435,7 +434,7 @@ void PrintGrain(player *Me) {
     return;
 }
 
-int ReleaseGrain(player *Me) {
+int ReleaseGrain(Player *Me) {
     double xp, zp;
     float x, z;
     char string[256];
@@ -551,7 +550,7 @@ int ReleaseGrain(player *Me) {
     return (0);
 }
 
-void SeizeAssets(player *Me) {
+void SeizeAssets(Player *Me) {
     char string[256];
     Me->Marketplaces = 0;
     Me->Palace = 0;
@@ -568,7 +567,7 @@ void SeizeAssets(player *Me) {
     return;
 }
 
-void SellGrain(player *Me) {
+void SellGrain(Player *Me) {
     char string[256];
     int HowMuch;
     printf("How much grain do you want to sell? ");
@@ -583,7 +582,7 @@ void SellGrain(player *Me) {
     return;
 }
 
-void SellLand(player *Me) {
+void SellLand(Player *Me) {
     char string[256];
     int HowMuch;
     printf("How much land do you want to sell? ");
@@ -598,7 +597,7 @@ void SellLand(player *Me) {
     return;
 }
 
-void SerfsDecomposing(player *Me, float MyScale) {
+void SerfsDecomposing(Player *Me, float MyScale) {
     int absc;
     float ord;
     absc = (int)MyScale;
@@ -609,7 +608,7 @@ void SerfsDecomposing(player *Me, float MyScale) {
     return;
 }
 
-void SerfsProcreating(player *Me, float MyScale) {
+void SerfsProcreating(Player *Me, float MyScale) {
     int absc;
     float ord;
     absc = (int)MyScale;
@@ -625,7 +624,7 @@ void PrintInstructions(void) {
     printf("Santa Paravia and Fiumaccio\n\n");
     printf("You are the ruler of a 15th century Italian city state.\n");
     printf("If you rule well, you will receive higher titles. The\n");
-    printf("first player to become king or queen wins. Life expectancy\n");
+    printf("first Player to become king or queen wins. Life expectancy\n");
     printf("then was brief, so you may not live long enough to win.\n");
     printf("The computer will draw a map of your state. The size\n");
     printf("of the area in the wall grows as you buy more land. The\n");
@@ -642,10 +641,10 @@ void PrintInstructions(void) {
     return;
 }
 
-void PlayGame(player MyPlayers[6], int NumOfPlayers) {
+void PlayGame(Player MyPlayers[6], int NumOfPlayers) {
     bool AllDead, Winner;
     int i, WinningPlayer = 0;
-    player Baron;
+    Player Baron;
     AllDead = false;
     Winner = false;
     InitializePlayer(&Baron, 1400, 6, 4, "Peppone", true);
@@ -671,7 +670,7 @@ void PlayGame(player MyPlayers[6], int NumOfPlayers) {
     return;
 }
 
-void NewTurn(player *Me, int HowMany, player MyPlayers[6], player *Baron) {
+void NewTurn(Player *Me, int HowMany, Player MyPlayers[6], Player *Baron) {
     int i;
     GenerateHarvest(Me);
     NewLandAndGrainPrices(Me);
@@ -698,7 +697,7 @@ void NewTurn(player *Me, int HowMany, player MyPlayers[6], player *Baron) {
         Me->IWon = true;
 }
 
-void BuySellGrain(player *Me) {
+void BuySellGrain(Player *Me) {
     bool Finished;
     char string[256];
     Finished = false;
@@ -731,7 +730,7 @@ void BuySellGrain(player *Me) {
     return;
 }
 
-void AdjustTax(player *Me) {
+void AdjustTax(Player *Me) {
     char string[256];
     int val = 1, duty = 0;
     string[0] = '\0';
@@ -793,12 +792,12 @@ void AdjustTax(player *Me) {
         SeizeAssets(Me);
 }
 
-void DrawMap(player *Me) {
+void DrawMap(Player *Me) {
     /* Not implemented yet. */
     return;
 }
 
-void StatePurchases(player *Me, int HowMany, player MyPlayers[6]) {
+void StatePurchases(Player *Me, int HowMany, Player MyPlayers[6]) {
     char string[256];
     int val = 1;
     string[0] = '\0';
@@ -837,7 +836,7 @@ void StatePurchases(player *Me, int HowMany, player MyPlayers[6]) {
     return;
 }
 
-void ShowStats(player MyPlayers[6], int HowMany) {
+void ShowStats(Player MyPlayers[6], int HowMany) {
     int i = 0;
     char string[256];
     printf("Nobles\tSoldiers\tClergy\tMerchants\tSerfs\tLand\tTreasury\n");
@@ -850,7 +849,7 @@ void ShowStats(player MyPlayers[6], int HowMany) {
     return;
 }
 
-void ImDead(player *Me) {
+void ImDead(Player *Me) {
     char string[256];
     int why;
     printf("\n\nVery sad news.\n%s %s has just died\n", Me->Title, Me->Name);
