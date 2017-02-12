@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2000 Thomas Knox
+Copyright (C) 2017 darkf
 
 Portions Copyright (C) 1979 by George Blank, used with permission.
 This program is free software; you can redistribute it and/or
@@ -14,17 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-/* Declare our standard C headers. */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
 #include <ncurses/curses.h>
-
-/* Declare an enum to emulate a Boolean. */
-enum TrueFalse { True, False };
-typedef enum TrueFalse boolean;
 
 struct Player {
     int Cathedral, Clergy, CustomsDuty, CustomsDutyRevenue, DeadSerfs;
@@ -36,7 +33,7 @@ struct Player {
     int TransplantedSerfs, Treasury, WhichPlayer, Year, YearOfDeath;
     char City[15], Name[25], Title[15];
     float PublicWorks, LandPrice;
-    boolean InvadeMe, IsBankrupt, IsDead, IWon, MaleOrFemale, NewTitle;
+    bool InvadeMe, IsBankrupt, IsDead, IWon, MaleOrFemale, NewTitle;
 } Player;
 typedef struct Player player;
 
@@ -53,7 +50,7 @@ char FemaleTitles[8][15] = {"Lady",    "Baroness",      "Countess", "Marquise",
 /* Our prototypes. */
 int main(void);
 int Random(int);
-void InitializePlayer(player *, int, int, int, char *, boolean);
+void InitializePlayer(player *, int, int, int, char *, bool);
 void AddRevenue(player *);
 int AttackNeighbor(player *, player *);
 void BuyCathedral(player *);
@@ -64,7 +61,7 @@ void BuyMill(player *);
 void BuyPalace(player *);
 void BuySoldiers(player *);
 int limit10(int, int);
-boolean CheckNewTitle(player *);
+bool CheckNewTitle(player *);
 void GenerateHarvest(player *);
 void GenerateIncome(player *);
 void ChangeTitle(player *);
@@ -90,7 +87,7 @@ int main(void) {
     player MyPlayers[6];
     int NumOfPlayers, i, level;
     char string[255], name[25];
-    boolean MorF;
+    bool MorF;
     /* Initialize the random number generator seed. */
     srand(time(NULL));
     /* Start the game. */
@@ -122,9 +119,9 @@ int main(void) {
         printf("Is %s a man or a woman (M or F)? ", name);
         fgets(string, 3, stdin);
         if (string[0] == 'm' || string[0] == 'M')
-            MorF = True;
+            MorF = true;
         else
-            MorF = False;
+            MorF = false;
         InitializePlayer(&MyPlayers[i], 1400, i, level, name, MorF);
     }
     /* Enter the main game loop. */
@@ -133,20 +130,12 @@ int main(void) {
     return (0);
 }
 
-/******************************************************************************
-** This function will take a parameter Hi and return a random integer**
-** between 0 and Hi.**
-******************************************************************************/
-int Random(int Hi) {
-    float RanNum;
-    RanNum = (float)rand();
-    RanNum /= (float)RAND_MAX;
-    RanNum *= (float)Hi;
-    return ((int)RanNum);
+/* Return a random number in the range [0, hi] */
+int Random(int hi) {
+    return (int)(rand() / RAND_MAX * hi);
 }
 
-void InitializePlayer(player *Me, int year, int city, int level, char *name, boolean MorF) {
-    /* This is pretty straightforward. */
+void InitializePlayer(player *Me, int year, int city, int level, char *name, bool MorF) {
     Me->Cathedral = 0;
     strcpy(Me->City, CityList[city]);
     Me->Clergy = 5;
@@ -155,9 +144,9 @@ void InitializePlayer(player *Me, int year, int city, int level, char *name, boo
     Me->GrainPrice = 25;
     Me->GrainReserve = 5000;
     Me->IncomeTax = 5;
-    Me->IsBankrupt = False;
-    Me->IsDead = False;
-    Me->IWon = False;
+    Me->IsBankrupt = false;
+    Me->IsDead = false;
+    Me->IWon = false;
     Me->Justice = 2;
     Me->Land = 10000;
     Me->LandPrice = 10.0;
@@ -174,7 +163,7 @@ void InitializePlayer(player *Me, int year, int city, int level, char *name, boo
     Me->Serfs = 2000;
     Me->Soldiers = 25;
     Me->TitleNum = 1;
-    if (Me->MaleOrFemale == True)
+    if (Me->MaleOrFemale == true)
         strcpy(Me->Title, MaleTitles[0]);
     else
         strcpy(Me->Title, FemaleTitles[0]);
@@ -195,7 +184,7 @@ void AddRevenue(player *Me) {
         Me->Treasury = (int)((float)Me->Treasury * 1.5);
     /* Will a title make the creditors happy (for now)? */
     if (Me->Treasury < (-10000 * Me->TitleNum))
-        Me->IsBankrupt = True;
+        Me->IsBankrupt = true;
     return;
 }
 
@@ -294,7 +283,7 @@ int limit10(int num, int denom) {
     return (val > 10 ? 10 : val);
 }
 
-boolean CheckNewTitle(player *Me) {
+bool CheckNewTitle(player *Me) {
     int Total;
     /* Tally up our success so far . . . . */
     Total = limit10(Me->Marketplaces, 1);
@@ -319,10 +308,10 @@ boolean CheckNewTitle(player *Me) {
         Me->OldTitle = Me->TitleNum;
         ChangeTitle(Me);
         printf("\aGood news! %s has achieved the rank of %s\n\n", Me->Name, Me->Title);
-        return (True);
+        return (true);
     }
     Me->TitleNum = Me->OldTitle;
-    return (False);
+    return (false);
 }
 
 void GenerateHarvest(player *Me) {
@@ -373,12 +362,12 @@ void GenerateIncome(player *Me) {
 }
 
 void ChangeTitle(player *Me) {
-    if (Me->MaleOrFemale == True)
+    if (Me->MaleOrFemale == true)
         strcpy(Me->Title, MaleTitles[Me->TitleNum]);
     else
         strcpy(Me->Title, FemaleTitles[Me->TitleNum]);
     if (Me->TitleNum == 7) {
-        Me->IWon = True;
+        Me->IWon = true;
         return;
     }
     return;
@@ -451,11 +440,11 @@ int ReleaseGrain(player *Me) {
     float x, z;
     char string[256];
     int HowMuch, Maximum, Minimum;
-    boolean IsOK;
-    IsOK = False;
+    bool IsOK;
+    IsOK = false;
     Minimum = Me->GrainReserve / 5;
     Maximum = (Me->GrainReserve - Minimum);
-    while (IsOK == False) {
+    while (IsOK == false) {
         printf("How much grain will you release for consumption?\n");
         printf("1 = Minimum (%d), 2 = Maximum(%d), or enter a value: ", Minimum, Maximum);
         fgets(string, 255, stdin);
@@ -471,11 +460,11 @@ int ReleaseGrain(player *Me) {
         else if (HowMuch > Maximum)
             printf("You must keep at least 20%%.\n");
         else
-            IsOK = True;
+            IsOK = true;
     }
     Me->SoldierPay = Me->MarketRevenue = Me->NewSerfs = Me->DeadSerfs = 0;
     Me->TransplantedSerfs = Me->FleeingSerfs = 0;
-    Me->InvadeMe = False;
+    Me->InvadeMe = false;
     Me->GrainReserve -= HowMuch;
     z = (float)HowMuch / (float)Me->GrainDemand - 1.0;
     if (z > 0.0)
@@ -552,11 +541,11 @@ int ReleaseGrain(player *Me) {
     printf("(Press ENTER): ");
     fgets(string, 255, stdin);
     if ((Me->Land / 1000) > Me->Soldiers) {
-        Me->InvadeMe = True;
+        Me->InvadeMe = true;
         return (3);
     }
     if ((Me->Land / 500) > Me->Soldiers) {
-        Me->InvadeMe = True;
+        Me->InvadeMe = true;
         return (3);
     }
     return (0);
@@ -571,7 +560,7 @@ void SeizeAssets(player *Me) {
     Me->Land = 6000;
     Me->PublicWorks = 1.0;
     Me->Treasury = 100;
-    Me->IsBankrupt = False;
+    Me->IsBankrupt = false;
     printf("\n\n%s %s is bankrupt.\n", Me->Title, Me->Name);
     printf("\nCreditors have seized much of your assets.\n");
     printf("\n(Press ENTER): ");
@@ -654,27 +643,27 @@ void PrintInstructions(void) {
 }
 
 void PlayGame(player MyPlayers[6], int NumOfPlayers) {
-    boolean AllDead, Winner;
+    bool AllDead, Winner;
     int i, WinningPlayer = 0;
     player Baron;
-    AllDead = False;
-    Winner = False;
-    InitializePlayer(&Baron, 1400, 6, 4, "Peppone", True);
-    while (AllDead == False && Winner == False) {
+    AllDead = false;
+    Winner = false;
+    InitializePlayer(&Baron, 1400, 6, 4, "Peppone", true);
+    while (AllDead == false && Winner == false) {
         for (i = 0; i < NumOfPlayers; i++)
-            if (MyPlayers[i].IsDead == False)
+            if (MyPlayers[i].IsDead == false)
                 NewTurn(&MyPlayers[i], NumOfPlayers, MyPlayers, &Baron);
-        AllDead = True;
+        AllDead = true;
         for (i = 0; i < NumOfPlayers; i++)
-            if (AllDead == True && MyPlayers[i].IsDead == False)
-                AllDead = False;
+            if (AllDead == true && MyPlayers[i].IsDead == false)
+                AllDead = false;
         for (i = 0; i < NumOfPlayers; i++)
-            if (MyPlayers[i].IWon == True) {
-                Winner = True;
+            if (MyPlayers[i].IWon == true) {
+                Winner = true;
                 WinningPlayer = i;
             }
     }
-    if (AllDead == True) {
+    if (AllDead == true) {
         printf("The game has ended.\n");
         return;
     }
@@ -688,7 +677,7 @@ void NewTurn(player *Me, int HowMany, player MyPlayers[6], player *Baron) {
     NewLandAndGrainPrices(Me);
     BuySellGrain(Me);
     ReleaseGrain(Me);
-    if (Me->InvadeMe == True) {
+    if (Me->InvadeMe == true) {
         for (i = 0; i < HowMany; i++)
             if (i != Me->WhichPlayer)
                 if (MyPlayers[i].Soldiers > (Me->Soldiers * 2.4)) {
@@ -706,14 +695,14 @@ void NewTurn(player *Me, int HowMany, player MyPlayers[6], player *Baron) {
     if (Me->Year == Me->YearOfDeath)
         ImDead(Me);
     if (Me->TitleNum >= 7)
-        Me->IWon = True;
+        Me->IWon = true;
 }
 
 void BuySellGrain(player *Me) {
-    boolean Finished;
+    bool Finished;
     char string[256];
-    Finished = False;
-    while (Finished == False) {
+    Finished = false;
+    while (Finished == false) {
         printf("\nYear %d\n", Me->Year);
         printf("\n%s %s\n\n", Me->Title, Me->Name);
         printf("Rats ate %d%% of your grain reserves.\n", Me->Rats);
@@ -729,7 +718,7 @@ void BuySellGrain(player *Me) {
         printf(" 4. Sell land\n(Enter q to continue): ");
         fgets(string, 255, stdin);
         if (string[0] == 'q')
-            Finished = True;
+            Finished = true;
         if (string[0] == '1')
             BuyGrain(Me);
         if (string[0] == '2')
@@ -800,7 +789,7 @@ void AdjustTax(player *Me) {
         }
     }
     AddRevenue(Me);
-    if (Me->IsBankrupt == True)
+    if (Me->IsBankrupt == true)
         SeizeAssets(Me);
 }
 
@@ -891,7 +880,7 @@ void ImDead(player *Me) {
                 break;
         }
     }
-    Me->IsDead = True;
+    Me->IsDead = true;
     printf("\n(Press ENTER): ");
     fgets(string, 255, stdin);
     return;
