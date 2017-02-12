@@ -96,7 +96,7 @@ int main(void) {
     int NumOfPlayers = atoi(string);
     if (NumOfPlayers < 1 || NumOfPlayers > 6) {
         printf("Thanks for playing.\n");
-        return (0);
+        return 0;
     }
 
     printf("What will be the difficulty of this game:\n1. Apprentice\n");
@@ -251,6 +251,7 @@ void BuyGrain(Player *Me) {
 
 void BuyLand(Player *Me) {
     char string[256];
+
     printf("How much land do you want to buy? ");
     fgets(string, 255, stdin);
 
@@ -336,17 +337,10 @@ void GenerateIncome(Player *Me) {
     Me->JusticeRevenue = (Me->Justice * 300 - 500) * Me->TitleNum;
 
     switch (Me->Justice) {
-        case 1:
-            strcpy(string, "Very Fair");
-            break;
-        case 2:
-            strcpy(string, "Moderate");
-            break;
-        case 3:
-            strcpy(string, "Harsh");
-            break;
-        case 4:
-            strcpy(string, "Outrageous");
+        case 1: strcpy(string, "Very Fair"); break;
+        case 2: strcpy(string, "Moderate"); break;
+        case 3: strcpy(string, "Harsh"); break;
+        case 4: strcpy(string, "Outrageous"); break;
     }
 
     float y = 150.0 - (float)Me->SalesTax - (float)Me->CustomsDuty - (float)Me->IncomeTax;
@@ -431,21 +425,11 @@ void NewLandAndGrainPrices(Player *Me) {
 void PrintGrain(Player *Me) {
     switch (Me->Harvest) {
         case 0:
-        case 1:
-            printf("Drought. Famine Threatens. ");
-            break;
-        case 2:
-            printf("Bad Weather. Poor Harvest. ");
-            break;
-        case 3:
-            printf("Normal Weather. Average Harvest. ");
-            break;
-        case 4:
-            printf("Good Weather. Fine Harvest. ");
-            break;
-        case 5:
-            printf("Excellent Weather. Great Harvest! ");
-            break;
+        case 1: printf("Drought. Famine threatens. "); break;
+        case 2: printf("Bad weather. Poor harvest. "); break;
+        case 3: printf("Normal weather. Average harvest. "); break;
+        case 4: printf("Good weather. Fine harvest. "); break;
+        case 5: printf("Excellent weather. Great harvest! "); break;
     }
 }
 
@@ -620,6 +604,7 @@ void SellGrain(Player *Me) {
         printf("You don't have it.\n");
         return;
     }
+
     Me->Treasury += (HowMuch * Me->GrainPrice / 1000);
     Me->GrainReserve -= HowMuch;
 }
