@@ -196,12 +196,12 @@ void AddRevenue(Player *Me) {
 
 int AttackNeighbor(Player *Me, Player *Him) {
     int LandTaken;
-    
+
     if (Me->WhichPlayer == 7)
         LandTaken = Random(9000) + 1000;
     else
         LandTaken = (Me->Soldiers * 1000) - (Me->Land / 3);
-    
+
     if (LandTaken > (Him->Land - 5000))
         LandTaken = (Him->Land - 5000) / 2;
 
@@ -310,7 +310,7 @@ bool CheckNewTitle(Player *Me) {
         Me->TitleNum = 7;
     if (Me->TitleNum < 0)
         Me->TitleNum = 0;
-    
+
     /* Did we change (could be backwards or forwards)? */
     if (Me->TitleNum > Me->OldTitle) {
         Me->OldTitle = Me->TitleNum;
@@ -385,7 +385,7 @@ void ChangeTitle(Player *Me) {
 void NewLandAndGrainPrices(Player *Me) {
     /* Generate an offset for use in later int->float conversions. */
     float MyRandom = (float)((float)rand() / (float)RAND_MAX);
-    
+
     float x = (float)Me->Land;
     float y = (((float)Me->Serfs - (float)Me->Mills) * 100.0) * 5.0;
 
@@ -431,11 +431,21 @@ void NewLandAndGrainPrices(Player *Me) {
 void PrintGrain(Player *Me) {
     switch (Me->Harvest) {
         case 0:
-        case 1: printf("Drought. Famine Threatens. "); break;
-        case 2: printf("Bad Weather. Poor Harvest. "); break;
-        case 3: printf("Normal Weather. Average Harvest. "); break;
-        case 4: printf("Good Weather. Fine Harvest. "); break;
-        case 5: printf("Excellent Weather. Great Harvest! "); break;
+        case 1:
+            printf("Drought. Famine Threatens. ");
+            break;
+        case 2:
+            printf("Bad Weather. Poor Harvest. ");
+            break;
+        case 3:
+            printf("Normal Weather. Average Harvest. ");
+            break;
+        case 4:
+            printf("Good Weather. Fine Harvest. ");
+            break;
+        case 5:
+            printf("Excellent Weather. Great Harvest! ");
+            break;
     }
 }
 
@@ -509,8 +519,7 @@ int ReleaseGrain(Player *Me) {
 
         SerfsProcreating(Me, 3.0);
         SerfsDecomposing(Me, xp + 8.0);
-    }
-    else {
+    } else {
         SerfsProcreating(Me, 7.0);
         SerfsDecomposing(Me, 3.0);
 
@@ -620,7 +629,7 @@ void SellLand(Player *Me) {
 
     printf("How much land do you want to sell? ");
     fgets(string, 255, stdin);
-    
+
     int HowMuch = atoi(string);
     if (HowMuch > (Me->Land - 5000)) {
         printf("You can't sell that much\n");
@@ -674,8 +683,7 @@ void PrintInstructions(void) {
 }
 
 void PlayGame(Player MyPlayers[6], int NumOfPlayers) {
-    bool AllDead = false,
-         Winner = false;
+    bool AllDead = false, Winner = false;
     int WinningPlayer = 0;
 
     Player Baron;
@@ -683,19 +691,19 @@ void PlayGame(Player MyPlayers[6], int NumOfPlayers) {
 
     while (!AllDead && !Winner) {
         for (int i = 0; i < NumOfPlayers; i++) {
-            if (MyPlayers[i].IsDead == false)
+            if (!MyPlayers[i].IsDead)
                 NewTurn(&MyPlayers[i], NumOfPlayers, MyPlayers, &Baron);
         }
 
         AllDead = true;
 
         for (int i = 0; i < NumOfPlayers; i++) {
-            if (AllDead == true && MyPlayers[i].IsDead == false)
+            if (AllDead && !MyPlayers[i].IsDead)
                 AllDead = false;
         }
-        
+
         for (int i = 0; i < NumOfPlayers; i++) {
-            if (MyPlayers[i].IWon == true) {
+            if (MyPlayers[i].IWon) {
                 Winner = true;
                 WinningPlayer = i;
             }
@@ -711,25 +719,30 @@ void PlayGame(Player MyPlayers[6], int NumOfPlayers) {
 }
 
 void NewTurn(Player *Me, int HowMany, Player MyPlayers[6], Player *Baron) {
-    int i;
     GenerateHarvest(Me);
     NewLandAndGrainPrices(Me);
     BuySellGrain(Me);
     ReleaseGrain(Me);
-    if (Me->InvadeMe == true) {
-        for (i = 0; i < HowMany; i++)
+
+    if (Me->InvadeMe) {
+        int i;
+        for (i = 0; i < HowMany; i++) {
             if (i != Me->WhichPlayer)
                 if (MyPlayers[i].Soldiers > (Me->Soldiers * 2.4)) {
                     AttackNeighbor(&MyPlayers[i], Me);
                     i = 9;
                 }
+        }
+
         if (i != 9)
             AttackNeighbor(Baron, Me);
     }
+
     AdjustTax(Me);
     DrawMap(Me);
     StatePurchases(Me, HowMany, MyPlayers);
     CheckNewTitle(Me);
+
     Me->Year++;
     if (Me->Year == Me->YearOfDeath)
         ImDead(Me);
@@ -738,10 +751,10 @@ void NewTurn(Player *Me, int HowMany, Player MyPlayers[6], Player *Baron) {
 }
 
 void BuySellGrain(Player *Me) {
-    bool Finished;
+    bool Finished = false;
     char string[256];
-    Finished = false;
-    while (Finished == false) {
+
+    while (!Finished) {
         printf("\nYear %d\n", Me->Year);
         printf("\n%s %s\n\n", Me->Title, Me->Name);
         printf("Rats ate %d%% of your grain reserves.\n", Me->Rats);
@@ -756,6 +769,7 @@ void BuySellGrain(Player *Me) {
         printf("\n1. Buy grain, 2. Sell grain, 3. Buy land,");
         printf(" 4. Sell land\n(Enter q to continue): ");
         fgets(string, 255, stdin);
+
         if (string[0] == 'q')
             Finished = true;
         if (string[0] == '1')
@@ -767,13 +781,13 @@ void BuySellGrain(Player *Me) {
         if (string[0] == '4')
             SellLand(Me);
     }
-    return;
 }
 
 void AdjustTax(Player *Me) {
     char string[256];
     int val = 1, duty = 0;
     string[0] = '\0';
+
     while (val != 0 || string[0] != 'q') {
         printf("\n%s %s\n\n", Me->Title, Me->Name);
         GenerateIncome(Me);
@@ -827,20 +841,22 @@ void AdjustTax(Player *Me) {
                 break;
         }
     }
+
     AddRevenue(Me);
-    if (Me->IsBankrupt == true)
+
+    if (Me->IsBankrupt)
         SeizeAssets(Me);
 }
 
 void DrawMap(Player *Me) {
     /* Not implemented yet. */
-    return;
 }
 
 void StatePurchases(Player *Me, int HowMany, Player MyPlayers[6]) {
     char string[256];
     int val = 1;
     string[0] = '\0';
+
     while (val != 0 || string[0] != 'q') {
         printf("\n\n%s %s\nState purchases.\n", Me->Title, Me->Name);
         printf("\n1. Marketplace (%d)\t\t\t\t1000 florins\n", Me->Marketplaces);
@@ -852,6 +868,7 @@ void StatePurchases(Player *Me, int HowMany, Player MyPlayers[6]) {
         printf("\nTo continue, enter q. To compare standings, enter 6\n");
         printf("Your choice: ");
         fgets(string, 255, stdin);
+
         val = atoi(string);
         switch (val) {
             case 1:
@@ -873,26 +890,28 @@ void StatePurchases(Player *Me, int HowMany, Player MyPlayers[6]) {
                 ShowStats(MyPlayers, HowMany);
         }
     }
-    return;
 }
 
 void ShowStats(Player MyPlayers[6], int HowMany) {
-    int i = 0;
     char string[256];
+
     printf("Nobles\tSoldiers\tClergy\tMerchants\tSerfs\tLand\tTreasury\n");
-    for (; i < HowMany; i++)
+
+    for (int i = 0; i < HowMany; i++)
         printf("\n%s %s\n%d\t%d\t\t%d\t%d\t\t%d\t%d\t%d\n", MyPlayers[i].Title, MyPlayers[i].Name, MyPlayers[i].Nobles,
                MyPlayers[i].Soldiers, MyPlayers[i].Clergy, MyPlayers[i].Merchants, MyPlayers[i].Serfs,
                MyPlayers[i].Land, MyPlayers[i].Treasury);
+
     printf("\n(Press ENTER): ");
     fgets(string, 255, stdin);
-    return;
 }
 
 void ImDead(Player *Me) {
     char string[256];
     int why;
+
     printf("\n\nVery sad news.\n%s %s has just died\n", Me->Title, Me->Name);
+
     if (Me->Year > 1450)
         printf("of old age after a long reign.\n");
     else {
@@ -919,8 +938,9 @@ void ImDead(Player *Me) {
                 break;
         }
     }
+
     Me->IsDead = true;
+
     printf("\n(Press ENTER): ");
     fgets(string, 255, stdin);
-    return;
 }
