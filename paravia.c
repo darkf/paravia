@@ -85,7 +85,8 @@ int main(void) {
     srand(time(NULL));
 
     printf("Santa Paravia and Fiumaccio\n");
-    printf("\nDo you wish instructions (Y or N)? ");
+    printf("\nDo you wish to read the instructions? (Y/N) ");
+    
     fgets(string, 254, stdin);
     if (string[0] == 'y' || string[0] == 'Y')
         PrintInstructions();
@@ -116,7 +117,7 @@ int main(void) {
         /* Strip off the trailing \n. */
         name[strlen(name) - 1] = '\0';
 
-        printf("Is %s a man or a woman (M or F)? ", name);
+        printf("Is %s male or female? (M or F) ", name);
         fgets(string, 3, stdin);
 
         bool isMale = (*string == 'm' || *string == 'M');
@@ -648,9 +649,9 @@ void SerfsProcreating(Player *Me, float MyScale) {
 void PrintInstructions(void) {
     char string[256];
     printf("Santa Paravia and Fiumaccio\n\n");
-    printf("You are the ruler of a 15th century Italian city state.\n");
+    printf("You are the ruler of a 15th century Italian city-state.\n");
     printf("If you rule well, you will receive higher titles. The\n");
-    printf("first Player to become king or queen wins. Life expectancy\n");
+    printf("first player to become king or queen wins. Life expectancy\n");
     printf("then was brief, so you may not live long enough to win.\n");
     printf("The computer will draw a map of your state. The size\n");
     printf("of the area in the wall grows as you buy more land. The\n");
