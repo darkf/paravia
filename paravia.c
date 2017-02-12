@@ -583,6 +583,7 @@ int ReleaseGrain(Player *Me) {
 
 void SeizeAssets(Player *Me) {
     char string[256];
+
     Me->Marketplaces = 0;
     Me->Palace = 0;
     Me->Cathedral = 0;
@@ -591,16 +592,17 @@ void SeizeAssets(Player *Me) {
     Me->PublicWorks = 1.0;
     Me->Treasury = 100;
     Me->IsBankrupt = false;
+
     printf("\n\n%s %s is bankrupt.\n", Me->Title, Me->Name);
     printf("\nCreditors have seized much of your assets.\n");
     printf("\n(Press ENTER): ");
+
     fgets(string, 255, stdin);
-    return;
 }
 
 void SellGrain(Player *Me) {
     char string[256];
-    
+
     printf("How much grain do you want to sell? ");
     fgets(string, 255, stdin);
 
@@ -611,44 +613,42 @@ void SellGrain(Player *Me) {
     }
     Me->Treasury += (HowMuch * Me->GrainPrice / 1000);
     Me->GrainReserve -= HowMuch;
-    return;
 }
 
 void SellLand(Player *Me) {
     char string[256];
-    int HowMuch;
+
     printf("How much land do you want to sell? ");
     fgets(string, 255, stdin);
-    HowMuch = atoi(string);
+    
+    int HowMuch = atoi(string);
     if (HowMuch > (Me->Land - 5000)) {
         printf("You can't sell that much\n");
         return;
     }
+
     Me->Land -= HowMuch;
     Me->Treasury += (int)(((float)HowMuch * Me->LandPrice));
-    return;
 }
 
 void SerfsDecomposing(Player *Me, float MyScale) {
-    int absc;
-    float ord;
-    absc = (int)MyScale;
-    ord = MyScale - (float)absc;
+    int absc = (int)MyScale;
+    float ord = MyScale - (float)absc;
+
     Me->DeadSerfs = (int)((((float)Random(absc) + ord) * (float)Me->Serfs) / 100.0);
     Me->Serfs -= Me->DeadSerfs;
+
     printf("%d serfs die this year.\n", Me->DeadSerfs);
-    return;
 }
 
 void SerfsProcreating(Player *Me, float MyScale) {
-    int absc;
-    float ord;
-    absc = (int)MyScale;
-    ord = MyScale - (float)absc;
+    int absc = (int)MyScale;
+    float ord = MyScale - (float)absc;
+
     Me->NewSerfs = (int)((((float)Random(absc) + ord) * (float)Me->Serfs) / 100.0);
     Me->Serfs += Me->NewSerfs;
+
     printf("%d serfs born this year.\n", Me->NewSerfs);
-    return;
 }
 
 void PrintInstructions(void) {
@@ -669,37 +669,45 @@ void PrintInstructions(void) {
     printf("grain, some of your people will starve, and you will have\n");
     printf("a high death rate. High taxes raise money, but slow down\n");
     printf("economic growth. (Press ENTER to begin game)\n");
+
     fgets(string, 255, stdin);
-    return;
 }
 
 void PlayGame(Player MyPlayers[6], int NumOfPlayers) {
-    bool AllDead, Winner;
-    int i, WinningPlayer = 0;
+    bool AllDead = false,
+         Winner = false;
+    int WinningPlayer = 0;
+
     Player Baron;
-    AllDead = false;
-    Winner = false;
     InitializePlayer(&Baron, 1400, 6, 4, "Peppone", true);
-    while (AllDead == false && Winner == false) {
-        for (i = 0; i < NumOfPlayers; i++)
+
+    while (!AllDead && !Winner) {
+        for (int i = 0; i < NumOfPlayers; i++) {
             if (MyPlayers[i].IsDead == false)
                 NewTurn(&MyPlayers[i], NumOfPlayers, MyPlayers, &Baron);
+        }
+
         AllDead = true;
-        for (i = 0; i < NumOfPlayers; i++)
+
+        for (int i = 0; i < NumOfPlayers; i++) {
             if (AllDead == true && MyPlayers[i].IsDead == false)
                 AllDead = false;
-        for (i = 0; i < NumOfPlayers; i++)
+        }
+        
+        for (int i = 0; i < NumOfPlayers; i++) {
             if (MyPlayers[i].IWon == true) {
                 Winner = true;
                 WinningPlayer = i;
             }
+        }
     }
-    if (AllDead == true) {
+
+    if (AllDead) {
         printf("The game has ended.\n");
         return;
     }
+
     printf("Game Over. %s %s wins.\n", MyPlayers[WinningPlayer].Title, MyPlayers[WinningPlayer].Name);
-    return;
 }
 
 void NewTurn(Player *Me, int HowMany, Player MyPlayers[6], Player *Baron) {
