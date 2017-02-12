@@ -20,7 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-#include <curses.h>
+#include <ncurses/curses.h>
+
 /* Declare an enum to emulate a Boolean. */
 enum TrueFalse {True, False};
 typedef enum TrueFalse boolean;
