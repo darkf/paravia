@@ -1,0 +1,14 @@
+BasedOnStyle: Chromium
+
+Language: Cpp
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+SpacesBeforeTrailingComments: 1
+
+ColumnLimit: 120
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Attach
+PointerBindsToType: false
