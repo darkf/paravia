@@ -36,17 +36,13 @@ typedef struct {
     bool InvadeMe, IsBankrupt, IsDead, IWon, MaleOrFemale, NewTitle;
 } Player;
 
-/* Declare our list of cities. */
 char CityList[7][15] = {"Santa Paravia", "Fiumaccio", "Torricella", "Molinetto", "Fontanile", "Romanga", "Monterana"};
 
-/* Declare our male titles. */
 char MaleTitles[8][15] = {"Sir", "Baron", "Count", "Marquis", "Duke", "Grand Duke", "Prince", "* H.R.H. King"};
 
-/* Declare our female titles. */
 char FemaleTitles[8][15] = {"Lady",    "Baroness",      "Countess", "Marquise",
                             "Duchess", "Grand Duchess", "Princess", "* H.R.H. Queen"};
 
-/* Our prototypes. */
 int main(void);
 int Random(int);
 void InitializePlayer(Player *, int, int, int, char *, bool);
@@ -84,49 +80,53 @@ void ImDead(Player *);
 
 int main(void) {
     Player MyPlayers[6];
-    int NumOfPlayers, i, level;
     char string[255], name[25];
-    bool MorF;
-    /* Initialize the random number generator seed. */
+
     srand(time(NULL));
-    /* Start the game. */
+
     printf("Santa Paravia and Fiumaccio\n");
     printf("\nDo you wish instructions (Y or N)? ");
     fgets(string, 254, stdin);
     if (string[0] == 'y' || string[0] == 'Y')
         PrintInstructions();
+
     printf("How many people want to play (1 to 6)? ");
     fgets(string, 254, stdin);
-    NumOfPlayers = (int)atoi(string);
+
+    int NumOfPlayers = (int)atoi(string);
     if (NumOfPlayers < 1 || NumOfPlayers > 6) {
         printf("Thanks for playing.\n");
         return (0);
     }
+
     printf("What will be the difficulty of this game:\n1. Apprentice\n");
     printf("2. Journeyman\n3. Master\n4. Grand Master\n\nChoose: ");
     fgets(string, 254, stdin);
-    level = (int)atoi(string);
+    int level = atoi(string);
+
     if (level < 1)
         level = 1;
     if (level > 4)
         level = 4;
-    for (i = 0; i < NumOfPlayers; i++) {
+
+    for (int i = 0; i < NumOfPlayers; i++) {
         printf("Who is the ruler of %s? ", CityList[i]);
         fgets(name, 24, stdin);
+
         /* Strip off the trailing \n. */
         name[strlen(name) - 1] = '\0';
+
         printf("Is %s a man or a woman (M or F)? ", name);
         fgets(string, 3, stdin);
-        if (string[0] == 'm' || string[0] == 'M')
-            MorF = true;
-        else
-            MorF = false;
-        InitializePlayer(&MyPlayers[i], 1400, i, level, name, MorF);
+
+        bool isMale = (*string == 'm' || *string == 'M');
+
+        InitializePlayer(&MyPlayers[i], 1400, i, level, name, isMale);
     }
-    /* Enter the main game loop. */
+
     PlayGame(MyPlayers, NumOfPlayers);
-    /* We're finished. */
-    return (0);
+
+    return 0;
 }
 
 /* Return a random number in the range [0, hi] */
@@ -134,7 +134,7 @@ int Random(int hi) {
     return (int)(rand() / RAND_MAX * hi);
 }
 
-void InitializePlayer(Player *Me, int year, int city, int level, char *name, bool MorF) {
+void InitializePlayer(Player *Me, int year, int city, int level, char *name, bool isMale) {
     Me->Cathedral = 0;
     strcpy(Me->City, CityList[city]);
     Me->Clergy = 5;
@@ -149,7 +149,7 @@ void InitializePlayer(Player *Me, int year, int city, int level, char *name, boo
     Me->Justice = 2;
     Me->Land = 10000;
     Me->LandPrice = 10.0;
-    Me->MaleOrFemale = MorF;
+    Me->MaleOrFemale = isMale;
     Me->Marketplaces = 0;
     Me->Merchants = 25;
     Me->Mills = 0;
