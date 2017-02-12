@@ -186,6 +186,7 @@ void InitializePlayer(player *Me, int year, int city, int level, char *name, boo
     Me->YearOfDeath = year + 20 + Random(35);
     return;
 }
+
 void AddRevenue(player *Me) {
     Me->Treasury += (Me->JusticeRevenue + Me->CustomsDutyRevenue);
     Me->Treasury += (Me->IncomeTaxRevenue + Me->SalesTaxRevenue);
@@ -197,6 +198,7 @@ void AddRevenue(player *Me) {
         Me->IsBankrupt = True;
     return;
 }
+
 int AttackNeighbor(player *Me, player *Him) {
     int LandTaken;
     int deadsoldiers = 0;
@@ -216,6 +218,7 @@ int AttackNeighbor(player *Me, player *Him) {
     printf("%s %s loses %d soldiers in battle.\n", Him->Title, Him->Name, deadsoldiers);
     return (LandTaken);
 }
+
 void BuyCathedral(player *Me) {
     Me->Cathedral += 1;
     Me->Clergy += Random(6);
@@ -223,6 +226,7 @@ void BuyCathedral(player *Me) {
     Me->PublicWorks += 1.0;
     return;
 }
+
 void BuyGrain(player *Me) {
     char string[256];
     int HowMuch;
@@ -243,6 +247,7 @@ void BuyGrain(player *Me) {
     Me->GrainReserve += HowMuch;
     return;
 }
+
 void BuyLand(player *Me) {
     char string[256];
     int HowMuch;
@@ -253,6 +258,7 @@ void BuyLand(player *Me) {
     Me->Treasury -= (int)(((float)HowMuch * Me->LandPrice));
     return;
 }
+
 void BuyMarket(player *Me) {
     Me->Marketplaces += 1;
     Me->Merchants += 5;
@@ -260,12 +266,14 @@ void BuyMarket(player *Me) {
     Me->PublicWorks += 1.0;
     return;
 }
+
 void BuyMill(player *Me) {
     Me->Mills += 1;
     Me->Treasury -= 2000;
     Me->PublicWorks += 0.25;
     return;
 }
+
 void BuyPalace(player *Me) {
     Me->Palace += 1;
     Me->Nobles += Random(2);
@@ -273,16 +281,19 @@ void BuyPalace(player *Me) {
     Me->PublicWorks += 0.5;
     return;
 }
+
 void BuySoldiers(player *Me) {
     Me->Soldiers += 20;
     Me->Serfs -= 20;
     Me->Treasury -= 500;
 }
+
 int limit10(int num, int denom) {
     register int val;
     val = num / denom;
     return (val > 10 ? 10 : val);
 }
+
 boolean CheckNewTitle(player *Me) {
     int Total;
     /* Tally up our success so far . . . . */
@@ -313,12 +324,14 @@ boolean CheckNewTitle(player *Me) {
     Me->TitleNum = Me->OldTitle;
     return (False);
 }
+
 void GenerateHarvest(player *Me) {
     Me->Harvest = (Random(5) + Random(6)) / 2;
     Me->Rats = Random(50);
     Me->GrainReserve = ((Me->GrainReserve * 100) - (Me->GrainReserve * Me->Rats)) / 100;
     return;
 }
+
 void GenerateIncome(player *Me) {
     float y;
     int revenues = 0;
@@ -358,6 +371,7 @@ void GenerateIncome(player *Me) {
            Me->JusticeRevenue, string);
     return;
 }
+
 void ChangeTitle(player *Me) {
     if (Me->MaleOrFemale == True)
         strcpy(Me->Title, MaleTitles[Me->TitleNum]);
@@ -369,6 +383,7 @@ void ChangeTitle(player *Me) {
     }
     return;
 }
+
 void NewLandAndGrainPrices(player *Me) {
     float x, y, MyRandom;
     int h;
@@ -408,6 +423,7 @@ void NewLandAndGrainPrices(player *Me) {
     Me->RatsAte = h;
     return;
 }
+
 void PrintGrain(player *Me) {
     switch (Me->Harvest) {
         case 0:
@@ -429,6 +445,7 @@ void PrintGrain(player *Me) {
     }
     return;
 }
+
 int ReleaseGrain(player *Me) {
     double xp, zp;
     float x, z;
@@ -544,6 +561,7 @@ int ReleaseGrain(player *Me) {
     }
     return (0);
 }
+
 void SeizeAssets(player *Me) {
     char string[256];
     Me->Marketplaces = 0;
@@ -560,6 +578,7 @@ void SeizeAssets(player *Me) {
     fgets(string, 255, stdin);
     return;
 }
+
 void SellGrain(player *Me) {
     char string[256];
     int HowMuch;
@@ -574,6 +593,7 @@ void SellGrain(player *Me) {
     Me->GrainReserve -= HowMuch;
     return;
 }
+
 void SellLand(player *Me) {
     char string[256];
     int HowMuch;
@@ -588,6 +608,7 @@ void SellLand(player *Me) {
     Me->Treasury += (int)(((float)HowMuch * Me->LandPrice));
     return;
 }
+
 void SerfsDecomposing(player *Me, float MyScale) {
     int absc;
     float ord;
@@ -598,6 +619,7 @@ void SerfsDecomposing(player *Me, float MyScale) {
     printf("%d serfs die this year.\n", Me->DeadSerfs);
     return;
 }
+
 void SerfsProcreating(player *Me, float MyScale) {
     int absc;
     float ord;
@@ -608,6 +630,7 @@ void SerfsProcreating(player *Me, float MyScale) {
     printf("%d serfs born this year.\n", Me->NewSerfs);
     return;
 }
+
 void PrintInstructions(void) {
     char string[256];
     printf("Santa Paravia and Fiumaccio\n\n");
@@ -629,6 +652,7 @@ void PrintInstructions(void) {
     fgets(string, 255, stdin);
     return;
 }
+
 void PlayGame(player MyPlayers[6], int NumOfPlayers) {
     boolean AllDead, Winner;
     int i, WinningPlayer = 0;
@@ -657,6 +681,7 @@ void PlayGame(player MyPlayers[6], int NumOfPlayers) {
     printf("Game Over. %s %s wins.\n", MyPlayers[WinningPlayer].Title, MyPlayers[WinningPlayer].Name);
     return;
 }
+
 void NewTurn(player *Me, int HowMany, player MyPlayers[6], player *Baron) {
     int i;
     GenerateHarvest(Me);
@@ -683,6 +708,7 @@ void NewTurn(player *Me, int HowMany, player MyPlayers[6], player *Baron) {
     if (Me->TitleNum >= 7)
         Me->IWon = True;
 }
+
 void BuySellGrain(player *Me) {
     boolean Finished;
     char string[256];
@@ -715,6 +741,7 @@ void BuySellGrain(player *Me) {
     }
     return;
 }
+
 void AdjustTax(player *Me) {
     char string[256];
     int val = 1, duty = 0;
@@ -776,10 +803,12 @@ void AdjustTax(player *Me) {
     if (Me->IsBankrupt == True)
         SeizeAssets(Me);
 }
+
 void DrawMap(player *Me) {
     /* Not implemented yet. */
     return;
 }
+
 void StatePurchases(player *Me, int HowMany, player MyPlayers[6]) {
     char string[256];
     int val = 1;
@@ -818,6 +847,7 @@ void StatePurchases(player *Me, int HowMany, player MyPlayers[6]) {
     }
     return;
 }
+
 void ShowStats(player MyPlayers[6], int HowMany) {
     int i = 0;
     char string[256];
@@ -830,6 +860,7 @@ void ShowStats(player MyPlayers[6], int HowMany) {
     fgets(string, 255, stdin);
     return;
 }
+
 void ImDead(player *Me) {
     char string[256];
     int why;
